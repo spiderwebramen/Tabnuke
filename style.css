@@ -1,0 +1,119 @@
+body {
+    margin: 0px;
+    padding: 5px;
+    background-color: #23222b;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 5px;
+}
+
+.btn {
+    border: 0px;
+    border-radius: 3px;
+    font-size: 1rem;
+    background-color: #484854;
+    color: #fff;
+    padding: 5px;
+}
+
+.btn:enabled:hover {
+    background-color: #5c5c6a;
+    cursor: pointer;
+}
+
+.btn:enabled:active {
+    background-color: #1c1c22;
+}
+
+.btn:disabled {
+    color: gray;
+}
+
+.btn:hover:disabled {
+    background-color: #484854;
+    cursor: not-allowed;
+}
+
+.btn:active:disabled {
+    background-color: #484854;
+}
+
+#nuke_this, #nuke_other, #nuke_all, #view_list {
+    grid-column: 1 / span 2;
+}
+
+#confirmDialog {
+    background-color: #42414d;
+    border-radius: 3px;
+    padding: 5px;
+    margin-top: 5px;
+    display: none;
+}
+
+#confirm {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 5px;
+}
+
+#msg {
+    font-size: 1rem;
+    color: #fff;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#btn_no {
+    background-color: #4f4e5a;
+    grid-column: 3;
+}
+
+#btn_no:hover {
+    background-color: #5c5b66;
+    cursor: pointer;
+}
+
+#btn_no:active {
+    background-color: #696873;
+}
+
+#btn_yes {
+    background-color: #00ddff;
+    color: #000;
+    grid-column: 4;
+}
+
+#btn_yes:hover {
+    background-color: #80ebff;
+    cursor: pointer;
+}
+
+#btn_yes:active {
+    background-color: #aaf2ff;
+}
+
+.btn:hover {
+    background-color: #5c5c6a;
+    cursor: pointer;
+}
+
+.btn:active {
+    background-color: #1c1c22;
+}
+
+#timeoutBg {
+    width: auto;
+    height: 2px;
+    background-color: #575566;
+}
+
+#timeoutBar {
+    width: 0%;
+    height: 2px;
+    background-color: #0b8dea;
+    /* transition: all 100ms; */
+}

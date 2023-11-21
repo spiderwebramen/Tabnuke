@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css"> 
+    </head>
+    <body>
+        <div class="container">
+            <button class="btn btn_main" id="nuke_this">Nuke Tab</button>
+            <button class="btn btn_main" id="nuke_left">Nuke Tabs to Left</button>
+            <button class="btn btn_main" id="nuke_right">Nuke Tabs to Right</button>
+            <button class="btn btn_main" id="nuke_all">Nuke All Tabs</button>
+            <button class="btn btn_main" id="nuke_other">Nuke Other Tabs</button>
+            <button class="btn btn_main" id="view_list">View Nuked Tabs</button>
+        </div> 
+
+        <div id="confirmDialog">
+            <div id="timeoutBg">
+                <div id="timeoutBar"></div>
+            </div>
+            <div id="msg">N/A</div>
+            <div id="confirm">
+                <button class="btn" id="btn_no">Cancel</button>
+                <button class="btn" id="btn_yes">OK</button>
+            </div>
+        </div>
+        
+        <script src="tabnuke.js"></script>
+    </body>
+</html>
