@@ -8,6 +8,8 @@ document.querySelector("#view_list").addEventListener("click", viewList);
 const DIALOG_TIMEOUT = 10 * 1000; // 30 secs
 const PROGRESS_BAR_SMOOTHNESS = 50; // millisecs; higher = smoother
 const PROGRESS_BAR_INC_WIDTH = 100 * PROGRESS_BAR_SMOOTHNESS / DIALOG_TIMEOUT;
+const DB_NAME = "TabDB";
+const TABLE_NAME = "Tabs";
 
 let currentTabIdx = undefined;
 
@@ -80,7 +82,7 @@ async function nukeTabs(filter) {
         });
     currentTabIdx = currentTab.index;
 
-    const tabList = (await browser.tabs
+    const tab_list = (await browser.tabs
         .query({ currentWindow: true }).then((tabs) => {
             let temp = [];
             for (const tab of tabs)
@@ -90,14 +92,15 @@ async function nukeTabs(filter) {
         }))
         .filter(filter);
 
-    console.log(tabList);
+    console.log(tab_list);
 
     disableBtn();
 
     // TODO: save to indexedDB
     // TODO: check nuke 0 tab
-    if (await confirmDialog("wanna nuke " + tabList.length + " tab(s)?")) {
+    if (await confirmDialog("wanna nuke " + tab_list.length + " tab(s)?")) {
         console.log("dialog confirmed");
+        saveTabs(tab_list);
     } else {
         console.log("dialog denied");
     }
@@ -105,6 +108,64 @@ async function nukeTabs(filter) {
     enableBtn();
 }
 
+function saveTabs(tab_list) {
+    const req = window.indexedDB.open(DB_NAME, 2);
+    req.onerror = (event) => {
+        console.error("IndexedDB error: " + event.target.errorCode);
+    }
+
+    req.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains(DB_NAME)) {
+            db.createObjectStore(TABLE_NAME, { autoIncrement: true });
+            console.log("created new db");
+        }
+    }
+
+    req.onsuccess = (event) => {
+        const db = event.target.result;
+
+        let transaction = db.transaction(TABLE_NAME, "readwrite");
+        let objStore = transaction.objectStore(TABLE_NAME);
+
+        let currentDate = new Date(Date.now()).toLocaleString();
+
+        let store_list = [];
+        for (const tab of tab_list) {
+            let obj = {
+                id: tab.id,
+                idx: tab.index,
+                icon: tab.favIconUrl,
+                title: tab.title,
+                url: tab.url
+            };
+            store_list.push(obj);
+        }
+
+        // should i store tab_list in its entirety?
+        let data = {
+            Date: currentDate,
+            tabs: store_list
+        };
+        let store_req = objStore.add(data);
+
+        store_req.onsuccess = () => {
+            console.log("store success");
+            for (const tab of tab_list) {
+                browser.tabs.remove(tab.id);
+            }
+        }
+
+        store_req.onerror = (wtf) => {
+            console.err("store error: " + wtf);
+        }
+
+        transaction.oncomplete = () => {
+            db.close();
+            console.log("connection closed");
+        }
+    }
+}
 
 async function nukeThis() { nukeTabs((tab) => tab.index === currentTabIdx); /* bad lol */ }
 async function nukeLeft() { nukeTabs((tab) => tab.index < currentTabIdx); }
@@ -113,7 +174,9 @@ async function nukeAll() { nukeTabs((tab) => { return tab }); } // lmao
 async function nukeOther() { nukeTabs((tab) => tab.index != currentTabIdx); }
 
 async function viewList() {
-    const req = window.indexedDB.open("TabDB", 3);
+    browser.tabs.create();
+    return;
+    const req = window.indexedDB.open(DB_NAME, 3);
     req.onerror = (event) => {
         console.error("indexedDB error!");
     }
